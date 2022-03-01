@@ -1,0 +1,64 @@
+---
+- name: install docker and run doom
+  hosts: nodes
+  gather_facts: true
+  become: true
+  vars:
+    mario: true
+    mario_port: 9999
+    doom: false
+    doom_port: 8888
+  tasks:
+    - name: add docker repo
+      get_url:
+        url: "https://download.docker.com/linux/centos/docker-ce.repo"
+        dest: '/etc/yum.repos.d/docker-ce.repo'
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: install epel-release for repos with python2-pip
+      yum:
+        name:
+          - epel-release
+        state: present
+
+    - name: install docker-ce and python2-pip
+      yum:
+        name:
+          - docker-ce
+          - python2-pip
+        state: present
+        update_cache: true
+
+    - name: install docker-py + particular version of websocket
+      pip:
+        executable: /usr/bin/pip2
+        name:
+          - docker-py
+          - websocket-client==0.32.0
+
+    - name: ensure docker is started
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    # Долгий этап. Скачивание образа из dockerhub
+    - name: run webdoom
+      community.docker.docker_container:
+        name: webdoom
+        image: "jakolehm/http-doom:0.1.0"
+        # image: "mattipaksula/http-doom:latest"
+        ports:
+          - "{{ doom_port }}:8080"
+      when: doom | bool
+
+    # Долгий этап. Скачивание образа из dockerhub
+    - name: run web mario
+      community.docker.docker_container:
+        name: webmario
+        image: kaminskypavel/mario
+        ports:
+          - "{{ mario_port }}:8080"
+      when: mario | bool
