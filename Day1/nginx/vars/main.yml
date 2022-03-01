@@ -1,0 +1,2 @@
+tls_enabled: true
+private_key_cn: My personal CA

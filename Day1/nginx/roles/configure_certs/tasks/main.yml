@@ -1,0 +1,66 @@
+---
+- block:
+  - name: create certificates directory
+    file: 
+      path: "{{ tls_cert_dir }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+      
+  - name: create private certificates directory
+    file: 
+      path: "{{ tls_cert_dir }}/private"
+      state: directory
+      owner: root
+      group: root
+      mode: 0700
+
+  - name: generate a private key
+    community.crypto.openssl_privatekey:
+      path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"
+  
+  - name: create csr for ca certificate
+    community.crypto.openssl_csr_pipe:
+      privatekey_path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"
+      common_name: "{{ private_key_cn }}"
+      use_common_name_for_san: false
+      basic_constraints:
+        - 'CA:TRUE'
+      basic_constraints_critical: yes
+      key_usage:
+        - keyCertSign
+      key_usage_critical: true
+    register: ca_csr
+
+  - name: create self-signed ca certificate from csr
+    community.crypto.x509_certificate:
+      path: "{{ tls_cert_dir }}/{{ private_ca_name }}.crt"
+      csr_content: "{{ ca_csr.csr }}"
+      privatekey_path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"
+      provider: selfsigned
+
+  - name: create private key for server {{ ansible_host }}
+    community.crypto.openssl_privatekey:
+      path: "{{ tls_private_key_dir }}/{{ ansible_host }}.key"
+
+  - name: create csr for {{ ansible_host }} certificate
+    community.crypto.openssl_csr_pipe:
+      privatekey_path: "{{ tls_private_key_dir }}/{{ ansible_host }}.key"
+      subject_alt_name:
+        - "DNS:{{ inventory_hostname }}"
+        - "IP:{{ ansible_host }}"
+      basic_constraints:
+        - 'CA:TRUE'
+    register: csr
+
+  - name: sign {{ ansible_host }} certificate with ca
+    community.crypto.x509_certificate:
+      csr_content: "{{ csr.csr }}"
+      provider: ownca
+      path: "{{ tls_cert_dir }}/{{ ansible_host }}.crt"
+      ownca_path: "{{ tls_cert_dir }}/{{ private_ca_name }}.crt"
+      ownca_privatekey_path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"
+      ownca_not_after: +365d
+      ownca_not_before: "-1d"
+  when: tls_enabled | bool
