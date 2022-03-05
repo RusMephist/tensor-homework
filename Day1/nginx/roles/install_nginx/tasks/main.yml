@@ -32,7 +32,7 @@
   notify: restart nginx
 
 - import_tasks: no_tls.yml
-  
+
 - import_tasks: with_tls.yml
 
 - name: ensure nginx is enabled and started

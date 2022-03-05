@@ -1,15 +1,15 @@
 ---
 - block:
   - name: create certificates directory
-    file: 
+    file:
       path: "{{ tls_cert_dir }}"
       state: directory
       owner: root
       group: root
       mode: 0755
-      
+
   - name: create private certificates directory
-    file: 
+    file:
       path: "{{ tls_cert_dir }}/private"
       state: directory
       owner: root
@@ -19,7 +19,7 @@
   - name: generate a private key
     community.crypto.openssl_privatekey:
       path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"
-  
+
   - name: create csr for ca certificate
     community.crypto.openssl_csr_pipe:
       privatekey_path: "{{ tls_private_key_dir }}/{{ private_ca_name }}.key"

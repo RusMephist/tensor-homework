@@ -2,8 +2,6 @@
 - hosts: nodes
   gather_facts: false
   become: true
-  # vars_files: 
-  #   - ./vars/main.yml
   pre_tasks:
     - name: install packages
       yum:
@@ -19,7 +17,7 @@
         name: "{{ item }}"
         state: present
       loop:
-        - pip == 20.3.4 
+        - pip == 20.3.4
         - cryptography >= 1.6
 
     - name: disable selinux
