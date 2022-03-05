@@ -1,0 +1,15 @@
+---
+- hosts: nodes
+  gather_facts: false
+  become: true
+  tasks:
+  - name: Add users
+    user:
+      name: "{{ user.name }}"
+      comment: "{{ node_user_comment }}"
+      password: "{{ user.password | password_hash('sha512') }}"
+    loop: "{{ node_users }}"
+    loop_control:
+      loop_var: user
+      label: "{{ user.name }}"
+      pause: 5

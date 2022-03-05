@@ -1,0 +1,2 @@
+node_users: "{{ vault_node_users }}"
+node_user_comment: Ansible-generated user
