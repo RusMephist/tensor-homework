@@ -11,5 +11,5 @@
     loop: "{{ node_users }}"
     loop_control:
       loop_var: user
-      label: "{{ user.name }}"
+      label: ""
       pause: 5
