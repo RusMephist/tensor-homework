@@ -11,5 +11,5 @@
     loop: "{{ node_users }}"
     loop_control:
       loop_var: user
-      label: ""
       pause: 5
+    no_log: true
