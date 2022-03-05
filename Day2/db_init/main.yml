@@ -1,0 +1,34 @@
+
+---
+- name: install MariaDB
+  hosts: nodes
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install 'mariadb-server' and 'MySQL-python' packages
+      yum:
+        name:
+          - mariadb-server
+          - MySQL-python
+        state: present
+
+    - name: Ensure 'mariadb' service is started and enabled
+      systemd:
+        state: started
+        enabled: true
+        name: mariadb
+
+    - name: Create "{{ db_name }}" database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+
+    - name: >
+        Create database user "{{ db_user }}" with "{{ db_pass }}"
+        and "{{ db_name }}".*:ALL privelege
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+      no_log: true
