@@ -1,0 +1,57 @@
+---
+- hosts: nodes
+  gather_facts: false
+  become: true
+  tags: nginx
+  pre_tasks:
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        update_cache: true
+        state: present
+      loop:
+        - epel-release
+        - python2-pip
+
+    - name: install requirement pip modules
+      pip:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - pip == 20.3.4
+        - cryptography >= 1.6
+
+    - name: disable selinux
+      selinux:
+        state: disabled
+
+  roles:
+    - configure_certs
+    - install_nginx
+
+  post_tasks:
+    - name: check "http://{{ ansible_host }}:{{ nginx_port_no_tls }}"
+      uri:
+        url: "http://{{ ansible_host }}:{{ nginx_port_no_tls }}"
+        return_content: true
+      connection: local
+      register: example_webpage_out
+      failed_when: example_webpage_out.status != 200
+      when: not tls_enabled
+
+    - name: check "https://{{ ansible_host }}:{{ nginx_port_with_tls }}"
+      uri:
+        url: "https://{{ ansible_host }}:{{ nginx_port_with_tls }}"
+        return_content: true
+        validate_certs: no
+      connection: local
+      register: example_webpage_out
+      failed_when: example_webpage_out.status != 200
+      when: tls_enabled | bool
+
+- hosts: nodes
+  gather_facts: false
+  become: true
+  tags: mariadb
+  roles:
+    - install_mariadb

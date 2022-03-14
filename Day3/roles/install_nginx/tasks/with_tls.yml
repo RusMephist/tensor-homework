@@ -1,0 +1,19 @@
+---
+- name: configure nginx with tls
+  block:
+  - name: copy site's nginx config file with tls
+    template:
+      src: with_tls.conf.j2
+      dest: /etc/nginx/conf.d/with_tls.conf
+      owner: root
+      group: root
+      mode: 0644
+    notify: restart nginx
+
+  - name: insert firewalld rule for {{ nginx_port_with_tls }} port
+    firewalld:
+      port: "{{ nginx_port_with_tls }}/tcp"
+      permanent: true
+      state: enabled
+      immediate: true
+  when: tls_enabled | bool

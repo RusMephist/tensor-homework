@@ -1,0 +1,4 @@
+---
+tls_enabled: false
+nginx_port_no_tls: 80
+nginx_port_with_tls: 442

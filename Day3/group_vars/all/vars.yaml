@@ -1,0 +1,5 @@
+tls_enabled: true
+private_key_cn: My personal CA
+db_user: ansible_user
+db_password: "{{ vault_db_password }}"
+db_name: ansible_db
