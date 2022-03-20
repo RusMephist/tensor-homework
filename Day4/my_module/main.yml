@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Get HTTP server code with bash custom module
+      http_bash:
+        action: get_code
+        server: "http://localhost:8000"
+      register: out_http_bash
+
+    - name: Debug bash custom module output
+      debug:
+        msg: "{{ out_http_bash }}"
+
+    - name: Get HTTP server code with python custom module
+      http_py:
+        action: get_code
+        server: "http://localhost:8000"
+      register: out_http_py
+
+    - name: Debug python custom module output
+      debug:
+        msg: "{{ out_http_py }}"
