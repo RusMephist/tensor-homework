@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    mac1: 1561AD156D56
+    mac2: 48D205F687E6429
+    mac3: 1234567891D
+    mac4: [wqe: ewq]
+    mac5: 0048A$54DQ07
+  tasks:
+    - name: Test 1
+      debug:
+        msg: "{{ mac1 | format_mac }}"
+      register: result
+      ignore_errors: true
+      failed_when: result is undefined
+    - name: Test 2
+      debug:
+        msg: "{{ mac2 | format_mac }}"
+      register: result
+      ignore_errors: true
+      failed_when: result is undefined
+    - name: Test 3
+      debug:
+        msg: "{{ mac3 | format_mac }}"
+      register: result
+      ignore_errors: true
+      failed_when: result is undefined
+    - name: Test 4
+      debug:
+        msg: "{{ mac4 | format_mac }}"
+      register: result
+      ignore_errors: true
+      failed_when: result is undefined
+    - name: Test 5
+      debug:
+        msg: "{{ mac5 | format_mac }}"
+      register: result
+      ignore_errors: true
+      failed_when: result is undefined
