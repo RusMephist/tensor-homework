@@ -1,0 +1,10 @@
+---
+- hosts: nodes
+  gather_facts: false
+  become: true
+  roles:
+    - prepare_node
+    - configure_certs
+    - install_nginx
+    - install_wordpress
+    - install_mariadb

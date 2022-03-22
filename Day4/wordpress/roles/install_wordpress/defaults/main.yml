@@ -1,0 +1,17 @@
+wp_version: 5.8.2
+wp_checksum: sha1:c3b1b59553eafbf301c83b14c5eeae4cf1c86044
+php_packages_list:
+  - php
+  - php-curl
+  - php-dom
+  - php-exif
+  - php-fileinfo
+  - php-fpm
+  - php-gd
+  - php-hash
+  - php-imagick
+  - php-json
+  - php-mbstring
+  - php-mysql
+  - php-xml
+  - php-zip

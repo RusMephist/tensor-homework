@@ -1,0 +1,34 @@
+---
+- name: prepare repository
+  copy:
+    src: "{{ item }}"
+    dest: /etc/yum.repos.d/
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - nginx.repo
+    - epel.repo
+    - remi-php74.repo
+    - remi-safe.repo
+
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    update_cache: true
+    state: present
+  loop:
+    - epel-release
+    - python2-pip
+
+- name: install requirement pip modules
+  pip:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - pip == 20.3.4
+    - cryptography >= 1.6
+
+- name: disable selinux
+  selinux:
+    state: disabled
