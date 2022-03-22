@@ -3,6 +3,8 @@
 from __future__ import (absolute_import, division, print_function)
 from ansible.module_utils.basic import AnsibleModule
 import requests
+import re
+
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -75,6 +77,20 @@ def main():
         argument_spec=module_args,
         supports_check_mode=False
     )
+
+    regex = re.compile(
+        r'^https?://'
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
+        r'localhost|'
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+        r'(?::\d+)?'
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    if not regex.search(module.params['server']):
+        module.fail_json(msg='url or ip insn\'t correct',
+                         changed=False,
+                         failed=True,
+                         rc=1)
 
     if module.params['action'] == 'get_code':
         answer = get_server_code(module.params['server'])

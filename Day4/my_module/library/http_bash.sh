@@ -12,11 +12,11 @@ function get_server_code {
 
 source $1
 
-if [ -z "$action" ]; then
+if [ -z $action ]; then
     printf '{"failed": true, "msg": "missing required arguments: action"}'
     exit 1
 fi
-if [ -z "$server" ]; then
+if [ -z $server ]; then
     printf '{"failed": true, "msg": "missing required arguments: server"}'
     exit 1
 fi
