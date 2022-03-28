@@ -1,0 +1,6 @@
+FROM alpine
+RUN apk add --no-cache python3 py3-pip
+RUN pip3 install --no-cache --upgrade pip setuptools prometheus_client
+WORKDIR /command
+COPY ./export.py .
+CMD python3 ./export.py
