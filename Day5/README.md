@@ -46,4 +46,4 @@ docker run -v /tmp/temp-prog-volume:/var/log -p 8000:8000 --rm -d -it export:lat
 
 ### Screenshots
 
-![alt text](https://github.com/RusMephist/tensor-homework/blob/main/images/Screenshot_20220329_025553.png?raw=true)
+![alt text](https://github.com/RusMephist/tensor-homework/blob/main/images/Screenshot_20220329_035021.png?raw=true)
